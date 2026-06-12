@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+
+#Bloque de Inspircd
+  inspircd:
+    build: .
+    container_name: inspircd-server
+    ports:
+      - "6667:6667"    # IRC estándar
+      - "6697:6697"    # IRC con TLS
+    volumes:
+      - ./conf:/opt/inspircd/conf
+      - ./logs:/opt/inspircd/logs
+    restart: unless-stopped
+    environment:
+      - TZ=UTC
+
+
+#Bloques de Weechat
+#Cliente 1
+  weechat:
+    build:
+      context: .
+      dockerfile: Dockerfile.weechat
+    container_name: weechat-client1
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./config:/home/weechat/.config/weechat
+      - ./data:/home/weechat/.local/share/weechat
+    environment:
+      - TZ=UTC
+    depends_on:
+      - inspircd
+
+#Clientw 2
+  weechat2:
+    build:
+      context: .
+      dockerfile: Dockerfile.weechat
+    container_name: weechat-client2
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./config2:/home/weechat/.config/weechat
+      - ./data2:/home/weechat/.local/share/weechat
+    environment:
+      - TZ=UTC
+    depends_on:
+      - inspircd

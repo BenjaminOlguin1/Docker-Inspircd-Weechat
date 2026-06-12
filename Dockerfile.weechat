@@ -1,0 +1,55 @@
+#imagen
+FROM debian:bookworm-slim
+
+#Dependencias para WeeChat
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    pkg-config \
+    git \
+    libcurl4-gnutls-dev \
+    libncursesw5-dev \
+    libgcrypt20-dev \
+    libgnutls28-dev \
+    zlib1g-dev \
+    libzstd-dev \
+    libcjson-dev \
+    gettext \
+    && rm -rf /var/lib/apt/lists/*
+
+#Se clona el repo
+WORKDIR /tmp
+RUN git clone --depth 1 https://github.com/weechat/weechat.git
+
+#Compila WeeChat
+WORKDIR /tmp/weechat/build
+RUN cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local \
+             -DENABLE_PYTHON=OFF \
+             -DENABLE_PERL=OFF \
+             -DENABLE_RUBY=OFF \
+             -DENABLE_LUA=OFF \
+             -DENABLE_TCL=OFF \
+             -DENABLE_GUILE=OFF \
+             -DENABLE_JAVASCRIPT=OFF \
+             -DENABLE_PHP=OFF \
+             -DENABLE_SPELL=OFF \
+    && make \
+    && make install
+
+# Usuario no privilegiado
+RUN useradd -m -u 1000 weechat
+
+#Carpetas de configuración y permisos
+RUN mkdir -p /home/weechat/.config/weechat /home/weechat/.local/share/weechat \
+    && chown -R weechat:weechat /home/weechat
+
+#Directorios como volumenes
+VOLUME /home/weechat/.config/weechat
+VOLUME /home/weechat/.local/share/weechat
+
+#Se cambiar al usuario no privilegiado
+USER weechat
+WORKDIR /home/weechat
+
+#Se ejecuta WeeChat
+CMD ["weechat"]
