@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
 
@@ -18,7 +17,7 @@ services:
 
 
 #Bloques de Weechat
-#Cliente 1
+#Cliente
   weechat:
     build:
       context: .
@@ -29,22 +28,6 @@ services:
     volumes:
       - ./config:/home/weechat/.config/weechat
       - ./data:/home/weechat/.local/share/weechat
-    environment:
-      - TZ=UTC
-    depends_on:
-      - inspircd
-
-#Clientw 2
-  weechat2:
-    build:
-      context: .
-      dockerfile: Dockerfile.weechat
-    container_name: weechat-client2
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./config2:/home/weechat/.config/weechat
-      - ./data2:/home/weechat/.local/share/weechat
     environment:
       - TZ=UTC
     depends_on:
