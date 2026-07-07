@@ -1,1 +1,1 @@
-# Docker-Inspircd-Weechat
+# Docker-Inspircd-Weechat-Scapy
