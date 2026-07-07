@@ -32,3 +32,19 @@ services:
       - TZ=UTC
     depends_on:
       - inspircd
+
+
+
+#Bloque de Scapy
+  scapy:
+    build:
+      context: .
+      dockerfile: Dockerfile.scapy
+    container_name: scapy-interceptor
+    network_mode: "host"
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./scripts:/scripts
+    stdin_open: true
+    tty: true
